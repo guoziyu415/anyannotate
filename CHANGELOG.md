@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.6.4 (Chrome extension) and macOS 0.3.0
+## 0.6.4 (Chrome extension; submitted for review September 25, 2026) and macOS 0.3.0
 
 - Finish the AnyAnnotate rename in code, identifiers, documentation, website, and screenshots
 - Chrome: move the local inbox and connected files to a renamed IndexedDB database once, without re-adding cleared notes

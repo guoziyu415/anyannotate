@@ -2,22 +2,20 @@
 
 ## Current status (September 25, 2026)
 
-AnyAnnotate 0.6.3 is published on the Chrome Web Store under the existing item ID and OAuth clients; the listing shows version 0.6.3, updated September 15, 2026. Automatic publication after approval was selected when it was submitted on September 13.
+AnyAnnotate 0.6.3 is published on the Chrome Web Store under the existing item ID and OAuth clients (listing updated September 15, 2026). Version 0.6.4 was submitted for review on September 25, 2026, and the dashboard shows **Pending review**. The live listing keeps its 0.6.3 content until the review passes.
 
 Version 0.6.4 completes the rename inside the code. It moves browser-local data to a renamed IndexedDB database once, writes new Google Docs duplicate-protection markers while recognizing earlier ones, and moves the homepage, privacy policy, and support links to the `anyannotate` repository and GitHub Pages site. The store ID, public key, and both OAuth clients are unchanged, so existing installations update in place.
 
-### Rename follow-up checklist
+### Rename follow-up (completed September 25, 2026)
 
-Do these in order so that the privacy policy URL is never unavailable for long:
+1. The GitHub repository was renamed to `anyannotate`, and its website field points to the new Pages site. GitHub redirects the old repository and git URLs, but not the old GitHub Pages address, which now returns 404 until the store listing update is live.
+2. https://guoziyu415.github.io/anyannotate/ and https://guoziyu415.github.io/anyannotate/privacy.html are live without the previous name.
+3. Google Search Console verified the new homepage as a URL-prefix property with the existing `google-site-verification` tag in `website/index.html`. Keep that tag.
+4. Google Cloud **Branding** shows the app name AnyAnnotate with the new homepage and privacy policy links. The project display name and both OAuth client names were renamed; the project ID cannot change. The Verification Center still reports that branding is not shown to users, so branding and sensitive-scope verification remain open.
+5. In the Chrome Web Store dashboard, the 0.6.4 package was uploaded, the previous-name notice was removed from the description, three new 1280 x 800 screenshots replaced the old ones, the homepage, support, and privacy policy URLs were updated, the test instructions below were saved, and the item was submitted for review.
+6. A macOS 0.3.0 release has not been published yet. Build it with `./scripts/build-app.sh` and `./scripts/package-macos-app.sh`.
 
-1. Merge the rename branch, then rename the GitHub repository to `anyannotate` under **Settings > General**. GitHub redirects the old repository and git URLs, but not the old GitHub Pages address.
-2. Run **Publish product website** and confirm that https://guoziyu415.github.io/anyannotate/ and https://guoziyu415.github.io/anyannotate/privacy.html return HTTP 200.
-3. In Google Search Console, add the new homepage as a URL-prefix property and replace the `google-site-verification` tag in `website/index.html` with its token.
-4. In Google Cloud **Branding**, set the app name to AnyAnnotate and update the homepage and privacy policy links. Optionally rename the project's display name; Google does not allow a project ID to change.
-5. In the Chrome Web Store dashboard, upload the 0.6.4 package from `node scripts/package-chrome-store.mjs`, update the homepage, support, and privacy policy URLs, replace the screenshots with the ones from **Capture Chrome store screenshots**, remove the previous-name notice from the description, and update the reviewer instructions below.
-6. Publish a macOS 0.3.0 release built with `./scripts/build-app.sh` and `./scripts/package-macos-app.sh`.
-
-Proposed reviewer instructions for 0.6.4:
+Saved test instructions for 0.6.4:
 
 > 0.6.4 completes the AnyAnnotate rename; same extension ID and OAuth clients. It migrates local data once and keeps existing notes. Local: on HTTP/HTTPS, select text > Annotate > add note > choose Markdown/TXT/Local inbox > Save. Optional Google Docs: Settings > Connect Google > create a Doc or paste its URL, then save/export. OAuth branding and scope verification are pending.
 
@@ -83,7 +81,7 @@ AnyAnnotate lets users explicitly save selected excerpts and annotations to a Go
 
 ### Homepage ownership explanation
 
-Submit this only after step 3 of the rename checklist succeeds for the new address.
+The new address was verified on September 25, 2026.
 
 The homepage is the GitHub Pages project site of the public repository https://github.com/guoziyu415/anyannotate, maintained by the GitHub account guoziyu415. Google Search Console confirmed Ownership verified for https://guoziyu415.github.io/anyannotate/ using an HTML verification tag under guoziyu415@gmail.com, the account used for this Google Cloud project. The tag remains on the live homepage. The privacy policy is publicly accessible on the same host and linked from the homepage. Please manually review this ownership evidence and let us know if verification at a different URL scope is required. We do not claim ownership of the parent github.io domain.
 
