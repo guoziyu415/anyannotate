@@ -17,6 +17,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         Self.shared = self
+        noteStore.migrateLegacyData()
         NSApp.setActivationPolicy(.accessory)
         configureStatusItem()
 

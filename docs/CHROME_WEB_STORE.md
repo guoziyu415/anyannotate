@@ -1,18 +1,33 @@
 # Chrome Web Store release preparation
 
-## AnyAnnotate rename (September 13, 2026)
+## Current status (September 25, 2026)
 
-The maintainer approved the new name **AnyAnnotate**. Chrome 0.6.3 prepares the new display name, export titles, settings, popup, and listing copy. The macOS app, optional MCP interface, README, and website source use the same brand. Existing screenshots and released archives retain their historical names.
+AnyAnnotate 0.6.3 is published on the Chrome Web Store under the existing item ID and OAuth clients; the listing shows version 0.6.3, updated September 15, 2026. Automatic publication after approval was selected when it was submitted on September 13.
 
-On September 13, the maintainer explicitly requested submission of the renamed version. The dashboard required cancellation of the existing review before accepting a new package. It confirmed **Review canceled** for 0.6.2, accepted **AnyAnnotate - Web Highlights & Notes**, version **0.6.3**, and then confirmed **Pending Review** and **Item submitted**. Automatic publication after approval remains selected. This is a submitted review, not an approved or published listing. Google OAuth branding has not been changed.
+Version 0.6.4 completes the rename inside the code. It moves browser-local data to a renamed IndexedDB database once, writes new Google Docs duplicate-protection markers while recognizing earlier ones, and moves the homepage, privacy policy, and support links to the `anyannotate` repository and GitHub Pages site. The store ID, public key, and both OAuth clients are unchanged, so existing installations update in place.
 
-Uploaded archive: `AnyAnnotate-Chrome-Web-Store-v0.6.3.zip`, SHA-256 `2fca3a6f77741203d8c738b8a11b543d60bfc7d26d7a7cfbf161cbebfee2d533`. The title came from the accepted package. The English description was renamed and includes a notice about previous-name screenshots and Google consent branding. Existing permissions, category, language, links, icons, and screenshots were retained. [CI for the renamed source](https://github.com/guoziyu415/answer-clipper/actions/runs/34733031415) passed.
+### Rename follow-up checklist
 
-Saved reviewer instructions (499 of 500 characters):
+Do these in order so that the privacy policy URL is never unavailable for long:
 
-> 0.6.3 renames Answer Clipper to AnyAnnotate; same extension ID and OAuth clients. Local: on HTTP/HTTPS, select text > Annotate > add note > choose Markdown/TXT/Local inbox > Save. Optional Google Docs: Settings > Connect Google > create a Doc or paste its URL, then save/export. OAuth branding/scope verification is pending; consent may show Answer Clipper. The 0.6.2 Google-save repair has automated checks; live store-client verification remains incomplete. Existing screenshots show the old name.
+1. Merge the rename branch, then rename the GitHub repository to `anyannotate` under **Settings > General**. GitHub redirects the old repository and git URLs, but not the old GitHub Pages address.
+2. Run **Publish product website** and confirm that https://guoziyu415.github.io/anyannotate/ and https://guoziyu415.github.io/anyannotate/privacy.html return HTTP 200.
+3. In Google Search Console, add the new homepage as a URL-prefix property and replace the `google-site-verification` tag in `website/index.html` with its token.
+4. In Google Cloud **Branding**, set the app name to AnyAnnotate and update the homepage and privacy policy links. Optionally rename the project's display name; Google does not allow a project ID to change.
+5. In the Chrome Web Store dashboard, upload the 0.6.4 package from `node scripts/package-chrome-store.mjs`, update the homepage, support, and privacy policy URLs, replace the screenshots with the ones from **Capture Chrome store screenshots**, remove the previous-name notice from the description, and update the reviewer instructions below.
+6. Publish a macOS 0.3.0 release built with `./scripts/build-app.sh` and `./scripts/package-macos-app.sh`.
 
-Repository and Pages URLs, both existing OAuth clients, the store ID/public key, the macOS bundle ID, local storage/database keys, existing file locations, and Google Docs deduplication markers are deliberately unchanged. User-created document titles and existing notes are not renamed. The homepage and privacy policy explain the previous name so reviewers and users can recognize both brands.
+Proposed reviewer instructions for 0.6.4:
+
+> 0.6.4 completes the AnyAnnotate rename; same extension ID and OAuth clients. It migrates local data once and keeps existing notes. Local: on HTTP/HTTPS, select text > Annotate > add note > choose Markdown/TXT/Local inbox > Save. Optional Google Docs: Settings > Connect Google > create a Doc or paste its URL, then save/export. OAuth branding and scope verification are pending.
+
+Repository-independent identities are deliberately unchanged: the store ID and public key, both OAuth clients, and the Google Cloud project. User-created document titles and existing notes are not renamed.
+
+## AnyAnnotate 0.6.3 submission (September 13, 2026)
+
+On September 13, the maintainer explicitly requested submission of the renamed version. The dashboard required cancellation of the existing 0.6.2 review before accepting a new package. It confirmed **Review canceled** for 0.6.2, accepted **AnyAnnotate - Web Highlights & Notes**, version **0.6.3**, and then confirmed **Pending Review** and **Item submitted**. Google OAuth branding was not changed.
+
+Uploaded archive: `AnyAnnotate-Chrome-Web-Store-v0.6.3.zip`, SHA-256 `2fca3a6f77741203d8c738b8a11b543d60bfc7d26d7a7cfbf161cbebfee2d533`. The English description gained a notice about screenshots and Google consent branding that still showed the previous name. Existing permissions, category, language, links, icons, and screenshots were retained.
 
 ## Previous 0.6.2 submission and save regression
 
@@ -25,22 +40,22 @@ After the initial submission, the maintainer reported a real Google Docs save fa
 - [Maintainer dashboard](https://chrome.google.com/webstore/devconsole/b26ec47b-5262-4b44-806c-c1f1d6ef82dd/mkdeklipbgfjoibioofimhcklfikgmgo/edit)
 - Saved listing fields: English description, Tools category, English (United States), the 128 x 128 icon, two 1280 x 800 screenshots, homepage URL, support URL and privacy policy URL.
 - The source repository is public, including its existing commit history, with the maintainer's approval.
-- The English [homepage](https://guoziyu415.github.io/answer-clipper/) and [privacy policy](https://guoziyu415.github.io/answer-clipper/privacy.html) are publicly hosted on GitHub Pages. Both returned HTTP 200 after the successful [website deployment](https://github.com/guoziyu415/answer-clipper/actions/runs/34688870812).
+- The English [homepage](https://guoziyu415.github.io/anyannotate/) and [privacy policy](https://guoziyu415.github.io/anyannotate/privacy.html) are publicly hosted on GitHub Pages. The site returned HTTP 200 at its earlier address after the [website deployment](https://github.com/guoziyu415/anyannotate/actions/runs/34688870812); recheck both links after the repository rename.
 - Public support contact: `guoziyu415@gmail.com`, explicitly confirmed by the maintainer. Chrome now displays **Verified email address**.
 - Single-purpose description, downloads/storage/identity/host explanations, and the no-remote-code answer have been saved. Data types disclosed: authentication information, personal communications, web history (saved source pages only), and website content. The maintainer confirmed that notes stay locally or in the user's Google Docs, not in an operator database; the three limited-use certifications were saved before submission.
 - Google Branding now has the product icon, homepage, privacy policy and `guoziyu415.github.io` authorized domain. Google Search Console confirmed **Ownership verified** for the homepage URL-prefix property using the HTML meta tag. Keep this tag in `website/index.html`; this is not Google OAuth approval.
-- The existing `answer-clipper` Google project now displays **In production**. No new project or OAuth client was created for this transition. Automated branding verification failed with a homepage-ownership finding despite the verified Search Console URL-prefix property. An explanation requesting manual review is drafted, not submitted; URL-prefix verification must not be represented as ownership of the parent `github.io` domain.
+- The existing Google Cloud project now displays **In production**. No new project or OAuth client was created for this transition. Automated branding verification failed with a homepage-ownership finding despite the verified Search Console URL-prefix property. An explanation requesting manual review is drafted, not submitted; URL-prefix verification must not be represented as ownership of the parent `github.io` domain.
 - The combined Google review form requires both a scope justification and a real YouTube demonstration. The justification is drafted in the existing project's Data Access page, but cannot be saved without the video URL. The maintainer supplied a real recording showing local-client authorization and a Google Docs write from an older build. It has not been uploaded or submitted, does not demonstrate the store client, and does not validate 0.6.1 or the 0.6.2 repair. Saved store test instructions explicitly disclose pending Google verification and the lack of a live store-client test.
-- [Store screenshot capture](https://github.com/guoziyu415/answer-clipper/actions/runs/34688888427) passed all 20 browser checks and produced three 1280 x 800 RGB PNGs. The annotation and selection screenshots are suitable for the store; the settings screenshot only shows the top of the inbox section. The normal [CI run](https://github.com/guoziyu415/answer-clipper/actions/runs/34688870822) passed too.
-- [CI for the uploaded source](https://github.com/guoziyu415/answer-clipper/actions/runs/34688017676) passed, including 40 Chrome unit tests and 20 isolated browser checks. Google identity and API responses in those tests are mocked.
+- [Store screenshot capture](https://github.com/guoziyu415/anyannotate/actions/runs/34688888427) passed all 20 browser checks and produced three 1280 x 800 RGB PNGs. The annotation and selection screenshots are suitable for the store; the settings screenshot only shows the top of the inbox section. The normal [CI run](https://github.com/guoziyu415/anyannotate/actions/runs/34688870822) passed too.
+- [CI for the uploaded source](https://github.com/guoziyu415/anyannotate/actions/runs/34688017676) passed, including 40 Chrome unit tests and 20 isolated browser checks. Google identity and API responses in those tests are mocked.
 
-The withdrawn 0.6.1 package was `Answer-Clipper-Chrome-Web-Store-v0.6.1.zip`, SHA-256 `c573380f92bfdf3947dc728caf5af5ba87012e5b8e593eb0f576b51139101397`. Its replacement is `Answer-Clipper-Chrome-Web-Store-v0.6.2.zip`, SHA-256 `e198967801562898267e1f70afd558f5d24aa1180939168d6792883bc19258d0`. Both use the existing store-specific public key and OAuth client; neither changes the original local installation identity. The earlier 43 passing unit tests did not catch the live Google save failure. The 0.6.2 candidate has 49 passing automated checks, but Google verification and live external-account testing remain incomplete despite the maintainer-requested store submission.
+The withdrawn 0.6.1 package had SHA-256 `c573380f92bfdf3947dc728caf5af5ba87012e5b8e593eb0f576b51139101397`. Its 0.6.2 replacement had SHA-256 `e198967801562898267e1f70afd558f5d24aa1180939168d6792883bc19258d0`. Both use the existing store-specific public key and OAuth client; neither changes the original local installation identity. The earlier 43 passing unit tests did not catch the live Google save failure. The 0.6.2 candidate has 49 passing automated checks, but Google verification and live external-account testing remain incomplete despite the maintainer-requested store submission.
 
 ## Preserve existing installation and store identities
 
 The existing development OAuth client is bound to extension ID `dkgiondcoadhpmmpinjdhdhmhgmlgnpm`. It must not be overwritten just to support the store ID.
 
-The store ID, verified public key, and separate OAuth client are recorded in [chrome-web-store.json](../config/chrome-web-store.json). These values are public application configuration, not secrets. Both existing clients remain in the `answer-clipper` project. The maintainer explicitly requested promotion of this existing project instead of creating another project or client.
+The store ID, verified public key, and separate OAuth client are recorded in [chrome-web-store.json](../config/chrome-web-store.json). These values are public application configuration, not secrets. Both existing clients remain in the same Google Cloud project. The maintainer explicitly requested promotion of this existing project instead of creating another project or client.
 
 Treat this as the release project after promotion. Automated development tests must continue using mocked Google services, not production OAuth. Google's testing/production separation and client-readiness policies still apply; promotion is not a claim that all Google requirements or reviews have been completed. Do not delete, replace or rotate the existing installation's credentials without explicit authorization.
 
@@ -64,11 +79,13 @@ These drafts are retained here because the dashboard cannot save the scope form 
 
 ### Scope justification
 
-Answer Clipper lets users explicitly save selected excerpts and annotations to a Google Doc they create or choose by pasting an existing document URL. The documents scope is used for documents.create, documents.get and documents.batchUpdate. Reads locate the chosen tab, append position, revision and deduplication markers; writes append notes, formatting and markers. Read-only access cannot save notes. drive.file only covers files created by or explicitly opened with the app; pasting an arbitrary existing Doc URL does not grant that per-file authorization in the current workflow. We do not list, scan or delete other documents. Google requests go directly from the extension to the Docs API over HTTPS; no application server receives notes or documents. Google connection is optional and initiated by the user. Local inbox, Markdown and TXT work without Google. Both existing Chrome Extension clients use this same workflow.
+AnyAnnotate lets users explicitly save selected excerpts and annotations to a Google Doc they create or choose by pasting an existing document URL. The documents scope is used for documents.create, documents.get and documents.batchUpdate. Reads locate the chosen tab, append position, revision and deduplication markers; writes append notes, formatting and markers. Read-only access cannot save notes. drive.file only covers files created by or explicitly opened with the app; pasting an arbitrary existing Doc URL does not grant that per-file authorization in the current workflow. We do not list, scan or delete other documents. Google requests go directly from the extension to the Docs API over HTTPS; no application server receives notes or documents. Google connection is optional and initiated by the user. Local inbox, Markdown and TXT work without Google. Both existing Chrome Extension clients use this same workflow.
 
 ### Homepage ownership explanation
 
-The homepage is the GitHub Pages project site of the public repository https://github.com/guoziyu415/answer-clipper, maintained by the GitHub account guoziyu415. On September 12, 2026, Google Search Console confirmed Ownership verified for https://guoziyu415.github.io/answer-clipper/ using an HTML verification tag under guoziyu415@gmail.com, the account used for this Google Cloud project. The tag remains on the live homepage. The privacy policy is publicly accessible on the same host and linked from the homepage. Please manually review this ownership evidence and let us know if verification at a different URL scope is required. We do not claim ownership of the parent github.io domain.
+Submit this only after step 3 of the rename checklist succeeds for the new address.
+
+The homepage is the GitHub Pages project site of the public repository https://github.com/guoziyu415/anyannotate, maintained by the GitHub account guoziyu415. Google Search Console confirmed Ownership verified for https://guoziyu415.github.io/anyannotate/ using an HTML verification tag under guoziyu415@gmail.com, the account used for this Google Cloud project. The tag remains on the live homepage. The privacy policy is publicly accessible on the same host and linked from the homepage. Please manually review this ownership evidence and let us know if verification at a different URL scope is required. We do not claim ownership of the parent github.io domain.
 
 ### Real demonstration checklist
 

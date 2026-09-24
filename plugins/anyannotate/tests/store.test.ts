@@ -7,7 +7,7 @@ import { exportDraft, renderMarkdown, renderText } from "../server/formats.js";
 import { DraftStore } from "../server/store.js";
 
 function temporaryStore() {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "answer-clipper-test-"));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "anyannotate-test-"));
   const file = path.join(directory, "draft.json");
   return {
     file,

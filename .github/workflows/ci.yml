@@ -15,7 +15,7 @@ jobs:
           cache: npm
           cache-dependency-path: |
             chrome-extension/package-lock.json
-            plugins/answer-clipper/package-lock.json
+            plugins/anyannotate/package-lock.json
       - run: node scripts/check-english.mjs
       - run: npm ci
         working-directory: chrome-extension
@@ -26,11 +26,11 @@ jobs:
       - run: npm run test:e2e
         working-directory: chrome-extension
       - run: npm ci
-        working-directory: plugins/answer-clipper
+        working-directory: plugins/anyannotate
       - run: npm test
-        working-directory: plugins/answer-clipper
+        working-directory: plugins/anyannotate
       - run: npm run build
-        working-directory: plugins/answer-clipper
+        working-directory: plugins/anyannotate
 
   macos:
     runs-on: macos-latest
@@ -38,4 +38,4 @@ jobs:
       - uses: actions/checkout@v4
       - run: swift test
       - run: ./scripts/build-app.sh
-      - run: file "build/AnyAnnotate.app/Contents/MacOS/AnswerClipper" | grep -q "universal binary"
+      - run: file "build/AnyAnnotate.app/Contents/MacOS/AnyAnnotate" | grep -q "universal binary"

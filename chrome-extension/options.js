@@ -175,9 +175,9 @@ async function ensureHeader(handle, format) {
   }
 }
 
-function getHandle(format) { return AnswerClipperDatabase.getFileHandle(format); }
-function putHandle(handle, format) { return AnswerClipperDatabase.putFileHandle(handle, format); }
-function deleteHandle(format) { return AnswerClipperDatabase.deleteFileHandle(format); }
+function getHandle(format) { return AnyAnnotateDatabase.getFileHandle(format); }
+function putHandle(handle, format) { return AnyAnnotateDatabase.putFileHandle(handle, format); }
+function deleteHandle(format) { return AnyAnnotateDatabase.deleteFileHandle(format); }
 
 function showMessage(message, isError = false) {
   clearTimeout(messageTimer);

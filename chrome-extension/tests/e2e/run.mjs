@@ -6,7 +6,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const testDir = path.dirname(fileURLToPath(import.meta.url));
 const sourceDir = path.resolve(testDir, "../..");
-const extensionDir = process.env.ANSWER_CLIPPER_EXTENSION_PATH ? path.resolve(process.env.ANSWER_CLIPPER_EXTENSION_PATH) : sourceDir;
+const extensionDir = process.env.ANYANNOTATE_EXTENSION_PATH ? path.resolve(process.env.ANYANNOTATE_EXTENSION_PATH) : sourceDir;
 const repositoryDir = path.resolve(sourceDir, "..");
 const storeScreenshots = process.argv.includes("--store-screenshots");
 const recordLive = process.argv.includes("--record-live");
@@ -20,9 +20,15 @@ const fixture = await fs.readFile(path.join(testDir, "reading-fixture.html"), "u
 const readingURLs = [
   "https://reading.example.test/notes",
   "http://docs.example.test/guide",
-  "https://chatgpt.com/answer-clipper-demo",
+  "https://chatgpt.com/anyannotate-demo",
 ];
-const profile = await fs.mkdtemp(path.join(os.tmpdir(), "answer-clipper-e2e-"));
+const profiles = [];
+async function createProfile() {
+  const directory = await fs.mkdtemp(path.join(os.tmpdir(), "anyannotate-e2e-"));
+  profiles.push(directory);
+  return directory;
+}
+let profile = await createProfile();
 await fs.mkdir(outputDir, { recursive: true });
 const captureScreenshots = recordLive || storeScreenshots || process.argv.includes("--screenshots");
 const checks = [];
@@ -50,7 +56,7 @@ async function launch() {
   }
   const worker = context.serviceWorkers()[0] || await context.waitForEvent("serviceworker");
   const id = worker.url().split("/")[2];
-  if (process.env.ANSWER_CLIPPER_EXPECTED_ID) assert.equal(id, process.env.ANSWER_CLIPPER_EXPECTED_ID, "The tested extension must have the expected store identity");
+  if (process.env.ANYANNOTATE_EXPECTED_ID) assert.equal(id, process.env.ANYANNOTATE_EXPECTED_ID, "The tested extension must have the expected store identity");
   return id;
 }
 
@@ -73,11 +79,11 @@ async function eventually(read, expected, description) {
 // CDP can inspect a closed shadow root without changing the shipped content script.
 // Input still goes through real mouse and keyboard events.
 async function extensionUI(page) {
-  await page.locator("#answer-clipper-root").waitFor({ state: "attached" });
+  await page.locator("#anyannotate-root").waitFor({ state: "attached" });
   const client = await context.newCDPSession(page);
   const { root } = await client.send("DOM.getDocument", { depth: -1, pierce: true });
   function findHost(node) {
-    if (node.attributes?.includes("answer-clipper-root")) return node;
+    if (node.attributes?.includes("anyannotate-root")) return node;
     for (const child of [...(node.children || []), ...(node.shadowRoots || [])]) {
       const found = findHost(child);
       if (found) return found;
@@ -224,7 +230,7 @@ try {
   await ui.click("#save");
   await eventually(() => ui.read("#overlay", "visible"), false, "Saving must close the dialog");
   assert.equal((await send(options, { type: "GET_STATUS" })).count, 1);
-  let clips = await options.evaluate(() => AnswerClipperDatabase.getClips());
+  let clips = await options.evaluate(() => AnyAnnotateDatabase.getClips());
   assert.equal(clips[0].quote, quote);
   assert.equal(clips[0].annotation, annotation);
   assert.deepEqual(clips[0].tags, ["#reading", "#ideas"]);
@@ -244,7 +250,7 @@ try {
   }));
   await Promise.all(parallelPages.map(({ ui: tabUI }) => tabUI.click("#save")));
   await eventually(async () => (await send(options, { type: "GET_STATUS" })).count, 3, "Both tabs must save");
-  clips = await options.evaluate(() => AnswerClipperDatabase.getClips());
+  clips = await options.evaluate(() => AnyAnnotateDatabase.getClips());
   assert.deepEqual(clips.map((clip) => clip.pageUrl).sort(), [...readingURLs].sort());
   passed("HTTP and HTTPS sites plus ChatGPT save concurrently with their own source links");
 
@@ -277,15 +283,15 @@ try {
   // Native OS file-picker interaction is outside this headless test.
   await options.evaluate(async () => {
     const directory = await navigator.storage.getDirectory();
-    const handle = await directory.getFileHandle("AnswerClipper-Test.md", { create: true });
-    await AnswerClipperDatabase.putFileHandle(handle);
+    const handle = await directory.getFileHandle("AnyAnnotate-Test.md", { create: true });
+    await AnyAnnotateDatabase.putFileHandle(handle);
   });
   const fileResults = await Promise.all(["First file entry", "Second file entry"].map((text, index) => send(options, {
     type: "SAVE_CLIP", destination: "markdown", clip: { id: `file-${index}`, quote: text, annotation: "File append test" },
   })));
   assert.ok(fileResults.every((result) => result.savedTo === "default"));
   const fileContents = await options.evaluate(async () => {
-    const handle = await AnswerClipperDatabase.getFileHandle();
+    const handle = await AnyAnnotateDatabase.getFileHandle();
     return (await handle.getFile()).text();
   });
   assert.ok(fileContents.includes("First file entry") && fileContents.includes("Second file entry"));
@@ -298,12 +304,12 @@ try {
   activePage = options;
   await options.goto(`chrome-extension://${extensionId}/options.html`);
   assert.equal((await send(options, { type: "GET_STATUS" })).count, 5);
-  assert.equal(await options.evaluate(async () => (await AnswerClipperDatabase.getFileHandle()).name), "AnswerClipper-Test.md");
+  assert.equal(await options.evaluate(async () => (await AnyAnnotateDatabase.getFileHandle()).name), "AnyAnnotate-Test.md");
   passed("Inbox and connected file handle survive a complete browser restart");
 
   await options.evaluate(async () => {
     const directory = await navigator.storage.getDirectory();
-    await directory.removeEntry("AnswerClipper-Test.md");
+    await directory.removeEntry("AnyAnnotate-Test.md");
   });
   const fallback = await send(options, { type: "SAVE_CLIP", clip: { quote: "Keep this even if the file is missing." } });
   assert.equal(fallback.savedTo, "inbox");
@@ -348,25 +354,25 @@ try {
   const localURL = pathToFileURL(path.join(testDir, "reading-fixture.html")).href;
   const fileAccessAllowed = await options.evaluate(() => chrome.extension.isAllowedFileSchemeAccess());
   if (fileAccessAllowed) {
-    await options.evaluate(() => AnswerClipperDatabase.deleteFileHandle());
+    await options.evaluate(() => AnyAnnotateDatabase.deleteFileHandle());
     const local = await openReadingPage(localURL);
     await selectQuote(local.page, local.ui, "#first-quote");
     await local.ui.click("#bubble");
     await local.ui.fill("#annotation", "A note from a local HTML document.");
     await local.ui.click("#save");
     await eventually(async () => (await send(options, { type: "GET_STATUS" })).count, 1, "Local document clip must save");
-    const [localClip] = await options.evaluate(() => AnswerClipperDatabase.getClips());
+    const [localClip] = await options.evaluate(() => AnyAnnotateDatabase.getClips());
     assert.equal(localClip.pageUrl, localURL);
     passed("Local HTML selections save with a file source when file access is enabled");
   } else {
     const local = await context.newPage();
     await local.goto(localURL);
-    assert.equal(await local.locator("#answer-clipper-root").count(), 0);
+    assert.equal(await local.locator("#anyannotate-root").count(), 0);
     passed("Chrome blocks local HTML injection until file access is enabled");
   }
 
   if (process.argv.includes("--live") || recordLive) {
-    await options.evaluate(() => AnswerClipperDatabase.deleteFileHandle());
+    await options.evaluate(() => AnyAnnotateDatabase.deleteFileHandle());
     const before = (await send(options, { type: "GET_STATUS" })).count;
     const live = await openReadingPage("https://example.com/");
     const liveQuote = await selectQuote(live.page, live.ui, "h1");
@@ -376,7 +382,7 @@ try {
     if (recordLive) await live.page.waitForTimeout(1800);
     await live.ui.click("#save");
     await eventually(async () => (await send(options, { type: "GET_STATUS" })).count, before + 1, "Live website clip must save");
-    const liveClips = await options.evaluate(() => AnswerClipperDatabase.getClips());
+    const liveClips = await options.evaluate(() => AnyAnnotateDatabase.getClips());
     const saved = liveClips.find((clip) => clip.pageUrl === "https://example.com/");
     assert.ok(saved);
     assert.equal(saved.quote, liveQuote);
@@ -420,8 +426,8 @@ try {
 
   // Exercise all local choices through the one-button annotation UI.
   await options.evaluate(async () => {
-    await AnswerClipperDatabase.deleteFileHandle();
-    await AnswerClipperDatabase.deleteFileHandle("txt");
+    await AnyAnnotateDatabase.deleteFileHandle();
+    await AnyAnnotateDatabase.deleteFileHandle("txt");
   });
   const localDownloadClient = await context.newCDPSession(options);
   await localDownloadClient.send("Browser.setDownloadBehavior", {
@@ -478,10 +484,10 @@ try {
 
   await options.evaluate(async () => {
     const directory = await navigator.storage.getDirectory();
-    const txt = await directory.getFileHandle("AnswerClipper-Test.txt", { create: true });
-    const md = await directory.getFileHandle("AnswerClipper-Other.md", { create: true });
-    await AnswerClipperDatabase.putFileHandle(txt, "txt");
-    await AnswerClipperDatabase.putFileHandle(md, "markdown");
+    const txt = await directory.getFileHandle("AnyAnnotate-Test.txt", { create: true });
+    const md = await directory.getFileHandle("AnyAnnotate-Other.md", { create: true });
+    await AnyAnnotateDatabase.putFileHandle(txt, "txt");
+    await AnyAnnotateDatabase.putFileHandle(md, "markdown");
   });
   for (const selector of ["#second-quote", "#third-quote"]) {
     await selectQuote(choice.page, choice.ui, selector);
@@ -491,8 +497,8 @@ try {
     await eventually(() => choice.ui.read("#overlay", "visible"), false, "TXT append must finish");
   }
   const appendText = await options.evaluate(async () => {
-    const txt = await AnswerClipperDatabase.getFileHandle("txt");
-    const md = await AnswerClipperDatabase.getFileHandle("markdown");
+    const txt = await AnyAnnotateDatabase.getFileHandle("txt");
+    const md = await AnyAnnotateDatabase.getFileHandle("markdown");
     return { txt: await (await txt.getFile()).text(), md: await (await md.getFile()).text() };
   });
   assert.equal((appendText.txt.match(/^AnyAnnotate$/gm) || []).length, 1);
@@ -518,7 +524,7 @@ try {
   await worker.evaluate(() => {
     const manifest = chrome.runtime.getManifest();
     chrome.runtime.getManifest = () => ({ ...manifest, oauth2: { client_id: "test-client.apps.googleusercontent.com" } });
-    chrome.identity.getAuthToken = async () => ({ token: "test-only-token", grantedScopes: [AnswerClipperGoogleDocs.SCOPE] });
+    chrome.identity.getAuthToken = async () => ({ token: "test-only-token", grantedScopes: [AnyAnnotateGoogleDocs.SCOPE] });
     chrome.identity.removeCachedAuthToken = async () => {};
     chrome.identity.clearAllCachedAuthTokens = async () => {};
     globalThis.googleTestState = {
@@ -635,7 +641,7 @@ try {
         const writer = await handle.createWritable();
         await writer.write(original);
         await writer.close();
-        await AnswerClipperDatabase.putFileHandle(handle, format);
+        await AnyAnnotateDatabase.putFileHandle(handle, format);
       }, { format, original });
       const result = await send(options, {
         type: "SAVE_CLIP", destination: format,
@@ -643,7 +649,7 @@ try {
       });
       assert.equal(result.savedTo, "default");
       const text = await options.evaluate(async (format) => {
-        const handle = await AnswerClipperDatabase.getFileHandle(format);
+        const handle = await AnyAnnotateDatabase.getFileHandle(format);
         return (await handle.getFile()).text();
       }, format);
       assert.ok(text.startsWith(original), "Existing bytes must not change");
@@ -652,6 +658,58 @@ try {
     }
   }
   passed("Existing Markdown and TXT files receive a blank-line separator through real browser file handles");
+
+  // Versions before 0.6.4 kept the inbox and file handles in an IndexedDB
+  // database with the previous internal name. Seed one in a fresh profile before
+  // the extension first opens IndexedDB, then confirm that real data moves over.
+  await context.close();
+  profile = await createProfile();
+  extensionId = await launch();
+  const upgradeWorker = context.serviceWorkers()[0];
+  await upgradeWorker.evaluate(async () => {
+    const directory = await navigator.storage.getDirectory();
+    const handle = await directory.getFileHandle("Legacy-Notes.txt", { create: true });
+    const writer = await handle.createWritable();
+    await writer.write("Earlier notes\n");
+    await writer.close();
+    const database = await new Promise((resolve, reject) => {
+      const request = indexedDB.open("answer-clipper-files", 2);
+      request.onupgradeneeded = () => {
+        request.result.createObjectStore("handles");
+        request.result.createObjectStore("clips", { keyPath: "id" }).createIndex("createdAt", "createdAt", { unique: false });
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    await new Promise((resolve, reject) => {
+      const transaction = database.transaction(["handles", "clips"], "readwrite");
+      transaction.objectStore("handles").put(handle, "default-txt");
+      transaction.objectStore("clips").put({ id: "saved-before-rename", quote: "An older note", annotation: "", createdAt: "2026-08-14T00:00:00Z" });
+      transaction.oncomplete = resolve;
+      transaction.onerror = () => reject(transaction.error);
+    });
+    database.close();
+  });
+  options = await context.newPage();
+  activePage = options;
+  await options.goto(`chrome-extension://${extensionId}/options.html`);
+  const upgraded = await send(options, { type: "GET_STATUS" });
+  assert.equal(upgraded.count, 1);
+  assert.equal(upgraded.files.txt.name, "Legacy-Notes.txt");
+  const migratedText = await options.evaluate(async () => {
+    const [clip] = await AnyAnnotateDatabase.getClips();
+    const handle = await AnyAnnotateDatabase.getFileHandle("txt");
+    return { id: clip.id, text: await (await handle.getFile()).text() };
+  });
+  assert.deepEqual(migratedText, { id: "saved-before-rename", text: "Earlier notes\n" });
+  await eventually(async () => options.evaluate(async () => (await indexedDB.databases()).map((item) => item.name).sort().join(",")),
+    "anyannotate-files", "The old database must be removed after migration");
+  const afterUpgrade = await send(options, {
+    type: "SAVE_CLIP", destination: "txt", clip: { id: "after-upgrade", quote: "New excerpt", annotation: "Saved after upgrading" },
+  });
+  assert.equal(afterUpgrade.savedTo, "default");
+  assert.ok((await options.evaluate(async () => (await (await AnyAnnotateDatabase.getFileHandle("txt")).getFile()).text())).includes("New excerpt"));
+  passed("Upgrading from an older build keeps the local inbox and a connected file");
 
   if (captureScreenshots && !storeScreenshots && !recordLive) {
     const destination = path.join(repositoryDir, "docs", "screenshots");
@@ -672,5 +730,5 @@ try {
   throw error;
 } finally {
   await context?.close();
-  await fs.rm(profile, { recursive: true, force: true });
+  for (const directory of profiles) await fs.rm(directory, { recursive: true, force: true });
 }

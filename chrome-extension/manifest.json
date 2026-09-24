@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "AnyAnnotate - Web Highlights & Notes",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "minimum_chrome_version": "109",
   "description": "Highlight web text, add annotations, and save to Google Docs, Markdown, plain text, or a local inbox.",
   "permissions": [

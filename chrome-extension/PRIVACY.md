@@ -1,8 +1,6 @@
 # AnyAnnotate Privacy Policy
 
-AnyAnnotate was previously called Answer Clipper. This policy covers both names. Existing releases and the Google consent screen may still show Answer Clipper during the transition. The rename does not change data handling or permissions.
-
-Last updated: September 12, 2026
+Last updated: September 25, 2026
 
 AnyAnnotate has one purpose: to let users select text on web pages, add an annotation, and save that content to a destination they choose.
 
@@ -46,4 +44,4 @@ If you contact the maintainer for support, the information you choose to send is
 
 ## Contact
 
-For privacy questions or sensitive reports, email guoziyu415@gmail.com. For general questions, use [AnyAnnotate GitHub Issues](https://github.com/guoziyu415/answer-clipper/issues). Do not send passwords, tokens, or entire private documents when asking for help.
+For privacy questions or sensitive reports, email guoziyu415@gmail.com. For general questions, use [AnyAnnotate GitHub Issues](https://github.com/guoziyu415/anyannotate/issues). Do not send passwords, tokens, or entire private documents when asking for help.

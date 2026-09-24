@@ -14,7 +14,7 @@ const ignoredDirectories = new Set([
   "icons",
 ]);
 const ignoredFiles = new Set(["package-lock.json"]);
-const ignoredRelativeDirectories = new Set(["plugins/answer-clipper/data"]);
+const ignoredRelativeDirectories = new Set(["plugins/anyannotate/data"]);
 const textExtensions = new Set([
   ".css",
   ".html",

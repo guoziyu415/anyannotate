@@ -49,7 +49,7 @@
   }
 
   function formatClip(clip) {
-    const formatting = root.AnswerClipperMarkdown || (typeof require === "function" ? require("./markdown.js") : null);
+    const formatting = root.AnyAnnotateMarkdown || (typeof require === "function" ? require("./markdown.js") : null);
     const note = formatting.getNoteContent(clip);
     // Clean before calculating UTF-16 offsets: Docs strips these characters.
     const clean = (value) => value.replace(/[\u0000-\u0008\u000C-\u001F\uE000-\uF8FF]/g, "").trim();
@@ -70,9 +70,23 @@
     return { text, quote, annotation, source };
   }
 
-  async function markerFor(clipId) {
+  const MARKER_PREFIX = "anyannotate_";
+  // Named ranges added before 0.6.4 used the product's previous internal name.
+  // They are still recognized so retries never duplicate an earlier export.
+  const LEGACY_MARKER_PREFIX = "answer_clipper_";
+
+  async function clipHash(clipId) {
     const hash = await root.crypto.subtle.digest("SHA-256", new TextEncoder().encode(clipId));
-    return `answer_clipper_${Array.from(new Uint8Array(hash), (value) => value.toString(16).padStart(2, "0")).join("")}`;
+    return Array.from(new Uint8Array(hash), (value) => value.toString(16).padStart(2, "0")).join("");
+  }
+
+  async function markerFor(clipId) {
+    return `${MARKER_PREFIX}${await clipHash(clipId)}`;
+  }
+
+  async function knownMarkersFor(clipId) {
+    const hash = await clipHash(clipId);
+    return [`${MARKER_PREFIX}${hash}`, `${LEGACY_MARKER_PREFIX}${hash}`];
   }
 
   function buildAppendBatch(document, target, entries, { basicFormatting = false } = {}) {
@@ -82,7 +96,7 @@
     const namedRanges = tab.documentTab.namedRanges || {};
     const known = new Set(Object.keys(namedRanges));
     for (const item of Object.values(namedRanges)) if (item.name) known.add(item.name);
-    const pending = entries.filter((entry) => !known.has(entry.marker));
+    const pending = entries.filter((entry) => !(entry.knownMarkers || [entry.marker]).some((marker) => known.has(marker)));
     if (!pending.length) return { pending, requests: [] };
     let index = Math.max(1, ...tab.documentTab.body.content.map((element) => (element.endIndex || 1) - 1));
     const requests = [];
@@ -226,7 +240,8 @@
         for (const clip of clips) {
           if (ids.has(clip.id)) continue;
           ids.add(clip.id);
-          entries.push({ ...formatClip(clip), marker: await markerFor(clip.id) });
+          const knownMarkers = await knownMarkersFor(clip.id);
+          entries.push({ ...formatClip(clip), marker: knownMarkers[0], knownMarkers });
         }
         let exported = 0;
         let skipped = 0;
@@ -273,7 +288,7 @@
     };
   }
 
-  const api = { SCOPE, parseDocumentLink, resolveTarget, formatClip, markerFor, buildAppendBatch, createClient };
-  root.AnswerClipperGoogleDocs = api;
+  const api = { SCOPE, parseDocumentLink, resolveTarget, formatClip, markerFor, knownMarkersFor, buildAppendBatch, createClient };
+  root.AnyAnnotateGoogleDocs = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })(typeof self !== "undefined" ? self : globalThis);

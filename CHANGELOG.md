@@ -1,13 +1,20 @@
 # Changelog
 
-## 0.6.3 (AnyAnnotate rename; Chrome Web Store review pending)
+## 0.6.4 (Chrome extension) and macOS 0.3.0
 
-- Rename the product from Answer Clipper to AnyAnnotate across Chrome, macOS, the optional MCP interface, documentation, and website source
+- Finish the AnyAnnotate rename in code, identifiers, documentation, website, and screenshots
+- Chrome: move the local inbox and connected files to a renamed IndexedDB database once, without re-adding cleared notes
+- Chrome: write new Google Docs duplicate-protection markers while still recognizing markers from earlier exports
+- Chrome: rename internal script globals, the page element ID, and the development package
+- macOS: rename the module, executable, and bundle identifier to `com.guoziyu.anyannotate`; move the default notes folder to `~/Documents/AnyAnnotate` and keep a saved custom location
+- MCP app: move to `plugins/anyannotate` and rename the server, tools, skill, and environment variables (`ANYANNOTATE_DATA_FILE`, `ANYANNOTATE_WIDGET_DOMAIN`)
+- Point links to the `anyannotate` repository and GitHub Pages site, and install from the Chrome Web Store
+
+## 0.6.3 (Chrome extension; published September 15, 2026)
+
+- Rename the product to AnyAnnotate across Chrome, macOS, the optional MCP interface, documentation, and website source
 - Use AnyAnnotate for new export headings, suggested filenames, and new Google Doc titles without rewriting existing user content
 - Preserve installation identities, OAuth clients, storage keys, existing file locations, and Google Docs duplicate-protection markers
-- Keep repository URLs, historical downloads, and screenshots compatible, and document the previous name during the transition
-- Replace the withdrawn 0.6.2 review with AnyAnnotate 0.6.3 on September 13, 2026; automatic publication after approval remains enabled
-- Leave existing Google OAuth branding unchanged and disclose the previous name during the transition
 
 ## 0.6.2 (Chrome extension; live verification pending)
 

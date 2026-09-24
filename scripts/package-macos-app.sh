@@ -10,7 +10,7 @@ VERSION="$(plutil -extract CFBundleShortVersionString raw -o - "$PROJECT_DIR/Res
 ARCHIVE="$DIST_DIR/AnyAnnotate-macOS-v$VERSION.zip"
 SIGN_IDENTITY="${CODE_SIGN_IDENTITY:--}"
 NOTARY_PROFILE="${NOTARY_PROFILE:-}"
-STAGING_DIR="$(mktemp -d "${TMPDIR:-/tmp}/answer-clipper-release.XXXXXX")"
+STAGING_DIR="$(mktemp -d "${TMPDIR:-/tmp}/anyannotate-release.XXXXXX")"
 STAGED_APP="$STAGING_DIR/AnyAnnotate.app"
 VERIFY_DIR="$STAGING_DIR/verify"
 

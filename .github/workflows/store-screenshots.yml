@@ -32,13 +32,13 @@ jobs:
         if: ${{ inputs.live_recording }}
         run: |
           node scripts/package-chrome-store.mjs
-          mkdir -p "$RUNNER_TEMP/answer-clipper-store-test"
-          unzip -q dist/AnyAnnotate-Chrome-Web-Store-*.zip -d "$RUNNER_TEMP/answer-clipper-store-test"
+          mkdir -p "$RUNNER_TEMP/anyannotate-store-test"
+          unzip -q dist/AnyAnnotate-Chrome-Web-Store-*.zip -d "$RUNNER_TEMP/anyannotate-store-test"
       - name: Record and verify real local saving
         if: ${{ inputs.live_recording }}
         run: |
-          ANSWER_CLIPPER_EXTENSION_PATH="$RUNNER_TEMP/answer-clipper-store-test" \
-          ANSWER_CLIPPER_EXPECTED_ID="mkdeklipbgfjoibioofimhcklfikgmgo" \
+          ANYANNOTATE_EXTENSION_PATH="$RUNNER_TEMP/anyannotate-store-test" \
+          ANYANNOTATE_EXPECTED_ID="mkdeklipbgfjoibioofimhcklfikgmgo" \
           node tests/e2e/run.mjs --record-live
         working-directory: chrome-extension
       - uses: actions/upload-artifact@v4

@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "answer-clipper": {
+    "anyannotate": {
       "cwd": ".",
       "command": "npm",
       "args": ["run", "start"]

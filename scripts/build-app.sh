@@ -42,7 +42,7 @@ BIN_DIR="$(env \
 
 rm -rf "$APP_DIR"
 mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
-cp "$BIN_DIR/AnswerClipper" "$MACOS_DIR/AnswerClipper"
+cp "$BIN_DIR/AnyAnnotate" "$MACOS_DIR/AnyAnnotate"
 cp "$PROJECT_DIR/Resources/Info.plist" "$CONTENTS_DIR/Info.plist"
 cp "$PROJECT_DIR/Resources/AppIcon.icns" "$RESOURCES_DIR/AppIcon.icns"
 

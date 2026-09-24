@@ -4,8 +4,8 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "answer-clipper-http-"));
-process.env.ANSWER_CLIPPER_DATA_FILE = path.join(temporaryDirectory, "draft.json");
+const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "anyannotate-http-"));
+process.env.ANYANNOTATE_DATA_FILE = path.join(temporaryDirectory, "draft.json");
 
 const { createHttpApp, validateHost } = await import("../server/index.js");
 

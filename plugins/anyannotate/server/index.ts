@@ -15,10 +15,10 @@ import { DraftStore } from "./store.js";
 import type { ClipChanges, DraftState, ExportFormat } from "./types.js";
 
 const VERSION = "0.2.0";
-const WIDGET_URI = "ui://answer-clipper/workspace-v0.2.0.html";
+const WIDGET_URI = "ui://anyannotate/workspace-v0.2.0.html";
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const dataFile = process.env.ANSWER_CLIPPER_DATA_FILE
-  ? path.resolve(process.env.ANSWER_CLIPPER_DATA_FILE)
+const dataFile = process.env.ANYANNOTATE_DATA_FILE
+  ? path.resolve(process.env.ANYANNOTATE_DATA_FILE)
   : path.join(rootDir, "data", "draft.json");
 const widgetFile = path.join(rootDir, "dist", "index.html");
 const store = new DraftStore(dataFile);
@@ -53,11 +53,11 @@ function readWidgetHtml(): string {
 }
 
 export function createMcpServer(): McpServer {
-  const server = new McpServer({ name: "answer-clipper", version: VERSION });
+  const server = new McpServer({ name: "anyannotate", version: VERSION });
 
   registerAppTool(
     server,
-    "open_answer_clipper",
+    "open_anyannotate",
     {
       title: "Open AnyAnnotate",
       description:
@@ -71,9 +71,9 @@ export function createMcpServer(): McpServer {
 
   registerAppTool(
     server,
-    "add_answer_clip",
+    "add_excerpt",
     {
-      title: "Add Answer Clip",
+      title: "Add Excerpt",
       description:
         "Add one exact excerpt to AnyAnnotate and open the workspace. Use only when the user clearly identifies text they want to keep.",
       inputSchema: {
@@ -239,8 +239,8 @@ export function createMcpServer(): McpServer {
         ui: {
           prefersBorder: true,
           csp: { connectDomains: [], resourceDomains: [] },
-          ...(process.env.ANSWER_CLIPPER_WIDGET_DOMAIN
-            ? { domain: process.env.ANSWER_CLIPPER_WIDGET_DOMAIN }
+          ...(process.env.ANYANNOTATE_WIDGET_DOMAIN
+            ? { domain: process.env.ANYANNOTATE_WIDGET_DOMAIN }
             : {}),
         },
       },
@@ -277,7 +277,7 @@ export function createHttpApp() {
     next();
   });
 
-  app.get("/health", (_req, res) => res.json({ ok: true, name: "answer-clipper", version: VERSION }));
+  app.get("/health", (_req, res) => res.json({ ok: true, name: "anyannotate", version: VERSION }));
   app.get("/preview", (_req, res) => res.type("html").send(readWidgetHtml()));
   app.get("/api/draft", (_req, res) => res.json({ draft: store.read() }));
   app.patch("/api/draft", (req, res) => {

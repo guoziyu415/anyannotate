@@ -25,7 +25,7 @@ const files = [
   "lib/database.js", "lib/google-docs.js", "lib/markdown.js",
   "icons/icon-16.png", "icons/icon-32.png", "icons/icon-48.png", "icons/icon-128.png",
 ];
-const stage = await fs.mkdtemp(path.join(os.tmpdir(), "answer-clipper-store-"));
+const stage = await fs.mkdtemp(path.join(os.tmpdir(), "anyannotate-store-"));
 try {
   for (const file of files) {
     const destination = path.join(stage, file);

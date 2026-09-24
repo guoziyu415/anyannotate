@@ -1,6 +1,6 @@
 # AnyAnnotate
 
-Previously **Answer Clipper**. The name is changing, not your notes or accounts. Repository links, installation identities, and existing storage locations stay the same. AnyAnnotate 0.6.3 was submitted to the Chrome Web Store on September 13, 2026, replacing the withdrawn 0.6.2 review. It is pending review, with automatic publication after approval. Older downloads and screenshots retain the previous branding.
+[Install AnyAnnotate from the Chrome Web Store](https://chromewebstore.google.com/detail/mkdeklipbgfjoibioofimhcklfikgmgo)
 
 AnyAnnotate is a local-first annotation tool for keeping the parts of an article, document, or AI answer that matter. Select text, add a note, and choose Google Docs, Markdown, plain text, or a local inbox without interrupting your reading flow.
 
@@ -43,11 +43,11 @@ Keep collecting while you read, then export your annotations together as Markdow
 
 ## Download
 
-- **Chrome beta:** download `Answer-Clipper-Chrome-v0.6.0.zip` from the [Chrome v0.6.0 Beta release](https://github.com/guoziyu415/answer-clipper/releases/tag/chrome-v0.6.0-beta.1). Unzip it into a permanent folder, then use **Load unpacked** in Chrome to select the folder containing `manifest.json`. No Node.js, npm, server, or API key is needed for local saving. See the [beta installation guide and limitations](docs/releases/chrome-v0.6.0-beta.1.md).
-- **macOS:** previous app downloads remain on [GitHub Releases](https://github.com/guoziyu415/answer-clipper/releases). The Chrome beta does not include a new macOS binary.
+- **Chrome:** install [AnyAnnotate from the Chrome Web Store](https://chromewebstore.google.com/detail/mkdeklipbgfjoibioofimhcklfikgmgo). No Node.js, npm, server, or API key is needed for local saving.
+- **macOS:** download the app from [GitHub Releases](https://github.com/guoziyu415/anyannotate/releases), or [build it from source](#build-from-source).
 - **Source:** the Chrome extension is also available under `chrome-extension` in this repository.
 
-The source repository and GitHub downloads are public. The Chrome beta is a GitHub download, not a Chrome Web Store listing. See the [product website](https://guoziyu415.github.io/answer-clipper/) and [privacy policy](https://guoziyu415.github.io/answer-clipper/privacy.html).
+The source repository is public. See the [product website](https://guoziyu415.github.io/anyannotate/) and [privacy policy](https://guoziyu415.github.io/anyannotate/privacy.html).
 
 ## macOS app
 
@@ -55,15 +55,17 @@ The macOS app works with ChatGPT Desktop, browsers, PDF readers, and other appli
 
 ### Install a release
 
-1. Download a macOS archive from GitHub Releases. Older releases retain the `Answer-Clipper-macOS-` prefix and `Answer Clipper.app` name; new builds use `AnyAnnotate-macOS-` and `AnyAnnotate.app`.
+1. Download the latest `AnyAnnotate-macOS-` archive from GitHub Releases.
 2. Unzip it and move the included app to `Applications`.
 3. Open the app. If macOS blocks the first launch, right-click the app, choose **Open**, and confirm.
 4. Select **Accessibility Permission...** from the highlighter icon in the menu bar.
-5. Enable AnyAnnotate (or Answer Clipper for an older release) in **System Settings > Privacy & Security > Accessibility**.
+5. Enable AnyAnnotate in **System Settings > Privacy & Security > Accessibility**.
 6. Select text in any supported app and click the floating **Annotate** button.
 7. Add a note and press `Command-Enter` to save.
 
-The default destination is `~/Documents/AnswerClipper/Inbox.md`. You can choose another Markdown file for one clip, make it the new default, or change the default later from the menu bar.
+The default destination is `~/Documents/AnyAnnotate/Inbox.md`. You can choose another Markdown file for one clip, make it the new default, or change the default later from the menu bar.
+
+Upgrading from version 0.2 moves your existing default notes folder to `~/Documents/AnyAnnotate` on first launch and keeps a custom location. Version 0.3 has a new app identity, so enable it again under **Accessibility** and remove the entry for the old app.
 
 ### Build from source
 
@@ -93,7 +95,7 @@ For a notarized release, first store notarization credentials in a keychain prof
 
 ```bash
 CODE_SIGN_IDENTITY="Developer ID Application: Your Name (TEAMID)" \
-NOTARY_PROFILE="answer-clipper-notary" \
+NOTARY_PROFILE="anyannotate-notary" \
 ./scripts/package-macos-app.sh
 ```
 
@@ -101,7 +103,11 @@ NOTARY_PROFILE="answer-clipper-notary" \
 
 The Chrome extension works on ordinary HTTP and HTTPS pages, including articles, blogs, reference pages, and AI conversations such as ChatGPT. It does not require macOS Accessibility permission; use the macOS app for desktop applications.
 
-### Install from GitHub
+### Install
+
+Install [AnyAnnotate from the Chrome Web Store](https://chromewebstore.google.com/detail/mkdeklipbgfjoibioofimhcklfikgmgo), then open or refresh a web page, select text, and click **Annotate**.
+
+### Install from source
 
 1. Download the repository with **Code > Download ZIP**, or clone it with Git.
 2. Unzip the repository archive if necessary.
@@ -151,11 +157,11 @@ New content is appended to the document. Local notes remain available if a reque
 
 ## Experimental MCP app
 
-`plugins/answer-clipper` provides an optional local in-chat workspace for collecting, editing, reordering, and exporting clips. Because ChatGPT widgets run in an isolated iframe, the MCP version cannot directly capture text selected in the surrounding conversation. The macOS app or Chrome extension is recommended for selection-based annotation.
+`plugins/anyannotate` provides an optional local in-chat workspace for collecting, editing, reordering, and exporting clips. Because ChatGPT widgets run in an isolated iframe, the MCP version cannot directly capture text selected in the surrounding conversation. The macOS app or Chrome extension is recommended for selection-based annotation.
 
 The MCP server intentionally binds only to a loopback address. Its browser preview API rejects cross-origin access. It remains a single-user development tool and must not be exposed as a public service without authentication and per-user storage.
 
-See [plugins/answer-clipper/README.md](plugins/answer-clipper/README.md) for development instructions.
+See [plugins/anyannotate/README.md](plugins/anyannotate/README.md) for development instructions.
 
 ## Development
 

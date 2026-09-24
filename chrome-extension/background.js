@@ -2,7 +2,7 @@
 
 importScripts("lib/markdown.js", "lib/database.js", "lib/google-docs.js");
 
-const googleDocs = AnswerClipperGoogleDocs.createClient({
+const googleDocs = AnyAnnotateGoogleDocs.createClient({
   identity: chrome.identity,
   getManifest: () => chrome.runtime.getManifest(),
 });
@@ -91,7 +91,7 @@ async function saveClip(rawClip, destination = "default") {
   if (!["default", "download", "markdown", "txt", "google", "inbox"].includes(destination)) {
     throw new Error("Invalid save destination.");
   }
-  const clip = AnswerClipperMarkdown.normalizeClip(rawClip);
+  const clip = AnyAnnotateMarkdown.normalizeClip(rawClip);
   await saveToLocalInbox(clip);
   const { saveDestination = "local", googleDocument, googleConnected } = await chrome.storage.local.get(["saveDestination", "googleDocument", "googleConnected"]);
   const chosen = destination === "default" ? saveDestination : destination;
@@ -117,7 +117,7 @@ async function saveClip(rawClip, destination = "default") {
     }
   }
 
-  const entry = format === "txt" ? AnswerClipperMarkdown.formatTextEntry(clip) : AnswerClipperMarkdown.formatEntry(clip);
+  const entry = format === "txt" ? AnyAnnotateMarkdown.formatTextEntry(clip) : AnyAnnotateMarkdown.formatEntry(clip);
   const handle = chosen === "download" ? null : await getFileHandle(format);
   if (!handle) {
     if (chosen !== "local") {
@@ -164,16 +164,16 @@ async function saveClip(rawClip, destination = "default") {
 
 async function saveToLocalInbox(clip) {
   await ensureLegacyInboxMigrated();
-  await AnswerClipperDatabase.putClip(clip);
+  await AnyAnnotateDatabase.putClip(clip);
 }
 
 async function getStatus() {
   await ensureLegacyInboxMigrated();
   const [{ defaultFileName = "", saveDestination = "local", googleConnected = false, googleDocument = null }, handle, textHandle, count] = await Promise.all([
     chrome.storage.local.get(["defaultFileName", "saveDestination", "googleConnected", "googleDocument"]),
-    AnswerClipperDatabase.getFileHandle(),
-    AnswerClipperDatabase.getFileHandle("txt"),
-    AnswerClipperDatabase.countClips()
+    AnyAnnotateDatabase.getFileHandle(),
+    AnyAnnotateDatabase.getFileHandle("txt"),
+    AnyAnnotateDatabase.countClips()
   ]);
 
   async function describe(fileHandle) {
@@ -200,30 +200,30 @@ async function getStatus() {
 
 async function exportToGoogle() {
   await ensureLegacyInboxMigrated();
-  const clips = await AnswerClipperDatabase.getClips();
+  const clips = await AnyAnnotateDatabase.getClips();
   if (!clips.length) throw new Error("The local inbox is empty.");
   const { googleDocument } = await chrome.storage.local.get("googleDocument");
   clips.sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
-  const result = await googleDocs.append(googleDocument, clips.map(AnswerClipperMarkdown.normalizeClip));
+  const result = await googleDocs.append(googleDocument, clips.map(AnyAnnotateMarkdown.normalizeClip));
   return { ok: true, ...result };
 }
 
 async function exportInbox(format = "markdown") {
   if (!["markdown", "txt"].includes(format)) throw new Error("Invalid export format.");
   await ensureLegacyInboxMigrated();
-  const inbox = await AnswerClipperDatabase.getClips();
+  const inbox = await AnyAnnotateDatabase.getClips();
   if (!Array.isArray(inbox) || !inbox.length) {
     return { ok: false, error: "The local inbox is empty" };
   }
   inbox.sort((left, right) => String(left.createdAt).localeCompare(String(right.createdAt)));
-  const text = format === "txt" ? AnswerClipperMarkdown.formatTextDocument(inbox) : AnswerClipperMarkdown.formatDocument(inbox);
+  const text = format === "txt" ? AnyAnnotateMarkdown.formatTextDocument(inbox) : AnyAnnotateMarkdown.formatDocument(inbox);
   await downloadFile(text, `AnyAnnotate-Inbox-${dateStamp()}.${format === "txt" ? "txt" : "md"}`, format);
   return { ok: true, count: inbox.length };
 }
 
 async function clearInbox() {
   await ensureLegacyInboxMigrated();
-  await AnswerClipperDatabase.clearClips();
+  await AnyAnnotateDatabase.clearClips();
   return { ok: true, count: 0 };
 }
 
@@ -268,7 +268,7 @@ function dateStamp() {
 }
 
 function getFileHandle(format) {
-  return AnswerClipperDatabase.getFileHandle(format);
+  return AnyAnnotateDatabase.getFileHandle(format);
 }
 
 function ensureLegacyInboxMigrated() {
@@ -278,7 +278,7 @@ function ensureLegacyInboxMigrated() {
     const legacy = stored[LEGACY_INBOX_KEY];
     if (!Array.isArray(legacy) || legacy.length === 0) return;
 
-    await AnswerClipperDatabase.putClips(legacy);
+    await AnyAnnotateDatabase.putClips(legacy);
     await chrome.storage.local.remove(LEGACY_INBOX_KEY);
   })().catch((error) => {
     migrationPromise = null;

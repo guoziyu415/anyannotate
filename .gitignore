@@ -8,4 +8,4 @@ dist/
 *.crx
 *.pem
 node_modules/
-plugins/answer-clipper/data/*.json
+plugins/anyannotate/data/*.json

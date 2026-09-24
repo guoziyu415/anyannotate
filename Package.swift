@@ -3,22 +3,22 @@
 import PackageDescription
 
 let package = Package(
-    name: "AnswerClipper",
+    name: "AnyAnnotate",
     platforms: [
         .macOS(.v13)
     ],
     products: [
-        .executable(name: "AnswerClipper", targets: ["AnswerClipper"])
+        .executable(name: "AnyAnnotate", targets: ["AnyAnnotate"])
     ],
     targets: [
         .executableTarget(
-            name: "AnswerClipper",
-            path: "Sources/AnswerClipper"
+            name: "AnyAnnotate",
+            path: "Sources/AnyAnnotate"
         ),
         .testTarget(
-            name: "AnswerClipperTests",
-            dependencies: ["AnswerClipper"],
-            path: "Tests/AnswerClipperTests"
+            name: "AnyAnnotateTests",
+            dependencies: ["AnyAnnotate"],
+            path: "Tests/AnyAnnotateTests"
         )
     ]
 )

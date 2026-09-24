@@ -1,10 +1,10 @@
-(function answerClipperContentScript() {
+(function anyAnnotateContentScript() {
   "use strict";
 
-  if (window.top !== window || document.getElementById("answer-clipper-root")) return;
+  if (window.top !== window || document.getElementById("anyannotate-root")) return;
 
   const host = document.createElement("div");
-  host.id = "answer-clipper-root";
+  host.id = "anyannotate-root";
   host.style.all = "initial";
   host.style.position = "fixed";
   host.style.zIndex = "2147483647";

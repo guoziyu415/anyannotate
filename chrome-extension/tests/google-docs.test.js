@@ -220,6 +220,18 @@ test("re-export skips remote markers, including duplicate input IDs", async () =
   assert.equal(state.writes.length, 2);
 });
 
+test("notes exported before the rename are recognized and not appended again", async () => {
+  const { client, state, target } = harness();
+  const [current, legacy] = await google.knownMarkersFor("older-note");
+  assert.equal(current, await google.markerFor("older-note"));
+  assert.match(current, /^anyannotate_[0-9a-f]{64}$/);
+  assert.equal(legacy.slice(legacy.lastIndexOf("_") + 1), current.slice(current.lastIndexOf("_") + 1));
+  state.document.tabs[0].documentTab.namedRanges[legacy] = { name: legacy };
+  assert.deepEqual(await client.append(target, [clip("older-note"), clip("new-note")]), { exported: 1, skipped: 1 });
+  const created = state.writes[0].requests.filter((request) => request.createNamedRange).map((request) => request.createNamedRange.name);
+  assert.deepEqual(created, [await google.markerFor("new-note")]);
+});
+
 test("a lost write response is not blindly retried and the next export deduplicates it", async () => {
   const { client, state, target } = harness();
   state.lostReply = true;

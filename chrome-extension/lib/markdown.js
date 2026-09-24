@@ -132,6 +132,6 @@
   }
 
   const api = { formatDocument, formatEntry, formatTextDocument, formatTextEntry, getNoteContent, normalizeClip, normalizeTags };
-  root.AnswerClipperMarkdown = api;
+  root.AnyAnnotateMarkdown = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })(typeof self !== "undefined" ? self : globalThis);

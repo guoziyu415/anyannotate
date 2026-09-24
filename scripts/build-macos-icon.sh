@@ -6,7 +6,7 @@ SCRIPT_DIR="${0:A:h}"
 PROJECT_DIR="${SCRIPT_DIR:h}"
 SOURCE_SVG="$PROJECT_DIR/chrome-extension/icons/icon.svg"
 OUTPUT_ICON="$PROJECT_DIR/Resources/AppIcon.icns"
-STAGING_DIR="$(mktemp -d "${TMPDIR:-/tmp}/answer-clipper-icon.XXXXXX")"
+STAGING_DIR="$(mktemp -d "${TMPDIR:-/tmp}/anyannotate-icon.XXXXXX")"
 ICONSET_DIR="$STAGING_DIR/AppIcon.iconset"
 SOURCE_PNG="$STAGING_DIR/icon.svg.png"
 

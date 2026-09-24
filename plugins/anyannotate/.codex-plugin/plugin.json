@@ -1,13 +1,13 @@
 {
-  "name": "answer-clipper",
+  "name": "anyannotate",
   "version": "0.1.0",
   "description": "Collect answer excerpts, add annotations, and export a reusable draft from an interactive MCP App.",
   "author": {
     "name": "guoziyu415",
     "url": "https://github.com/guoziyu415"
   },
-  "homepage": "https://github.com/guoziyu415/answer-clipper/tree/main/plugins/answer-clipper",
-  "repository": "https://github.com/guoziyu415/answer-clipper",
+  "homepage": "https://github.com/guoziyu415/anyannotate/tree/main/plugins/anyannotate",
+  "repository": "https://github.com/guoziyu415/anyannotate",
   "keywords": ["notes", "annotations", "markdown", "mcp-app"],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",

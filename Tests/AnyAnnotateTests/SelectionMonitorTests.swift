@@ -1,6 +1,6 @@
 import AppKit
 import XCTest
-@testable import AnswerClipper
+@testable import AnyAnnotate
 
 final class SelectionMonitorTests: XCTestCase {
     func testMissingSelectionDoesNotPresentBubble() {

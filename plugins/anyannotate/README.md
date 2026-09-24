@@ -17,7 +17,7 @@ AnyAnnotate is a local-only MCP app with an in-chat interface. It can also be us
 Node.js 20 or later is required.
 
 ```bash
-cd plugins/answer-clipper
+cd plugins/anyannotate
 npm install
 npm start
 ```
@@ -51,14 +51,14 @@ ChatGPT widgets run inside an isolated iframe and cannot monitor or read the sur
 The current input methods are:
 
 1. Paste or type an excerpt at the top of the workspace.
-2. Clearly identify the text to save in ChatGPT so `add_answer_clip` can add it and open the workspace.
+2. Clearly identify the text to save in ChatGPT so `add_excerpt` can add it and open the workspace.
 
 The local preview uses same-origin `/api` routes. Cross-origin browser access is rejected to prevent unrelated websites from reading or changing the local draft.
 
 ## Data and deployment
 
-The default data file is `data/draft.json`. Set `ANSWER_CLIPPER_DATA_FILE` to use another path. `PORT` controls the listening port. `HOST` may be `127.0.0.1`, `localhost`, or `::1`; non-loopback binding is rejected.
+The default data file is `data/draft.json`. Set `ANYANNOTATE_DATA_FILE` to use another path. `PORT` controls the listening port. `HOST` may be `127.0.0.1`, `localhost`, or `::1`; non-loopback binding is rejected.
 
 This version is a single-user, local-first prototype. The REST preview is same-origin only, but the MCP endpoint does not implement user authentication. Before any public deployment, add OAuth, per-user isolation, a persistent database, rate limiting, logging, and abuse controls. Never expose one default draft to multiple users.
 
-The widget resource URI is versioned. Set `ANSWER_CLIPPER_WIDGET_DOMAIN` to the verified HTTPS origin when preparing a future submission; it is intentionally omitted for local development.
+The widget resource URI is versioned. Set `ANYANNOTATE_WIDGET_DOMAIN` to the verified HTTPS origin when preparing a future submission; it is intentionally omitted for local development.

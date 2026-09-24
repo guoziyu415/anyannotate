@@ -17,15 +17,15 @@ function setup(initial = {}) {
   const state = { downloadError: null, cloudError: null };
   const context = vm.createContext({
     importScripts() {},
-    AnswerClipperMarkdown: markdown,
-    AnswerClipperDatabase: {
+    AnyAnnotateMarkdown: markdown,
+    AnyAnnotateDatabase: {
       putClip: async (clip) => clips.set(clip.id, clip),
       putClips: async (list) => list.forEach((clip) => clips.set(clip.id, clip)),
       getClips: async () => [...clips.values()], countClips: async () => clips.size,
       clearClips: async () => clips.clear(),
       getFileHandle: async (format = "markdown") => handles.get(format),
     },
-    AnswerClipperGoogleDocs: { createClient: () => ({
+    AnyAnnotateGoogleDocs: { createClient: () => ({
       configured: () => true,
       append: async (document, entries) => {
         if (state.cloudError) throw state.cloudError;
